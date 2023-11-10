@@ -1,0 +1,46 @@
+$paddingLayout : 90px;
+$header-banner-height: 45px;
+$nav-top-height: 45px;
+$nav-main-height: 85px;
+$border-bottom: 1px solid #E0E0E0;
+
+.header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+
+    .header__side_nav {
+        margin-top: 10px;
+        height: $header-banner-height;
+        justify-content: center;
+        align-items: center;
+        height: $nav-main-height;
+    }
+    .header__top {
+        margin-top: 12px;
+        padding-inline: $paddingLayout;
+        height: $nav-top-height;
+
+    }
+    .header__main {
+       
+        justify-content: center;
+        align-items: center;
+        padding-inline: $paddingLayout;
+        height: $nav-main-height;
+        // border-bottom: $border-bootom;
+        
+    }
+
+}
+
+.main-content {
+    width: 100%;
+    padding-inline: $paddingLayout;
+
+}
+
+
+
+

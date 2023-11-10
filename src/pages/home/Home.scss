@@ -1,0 +1,27 @@
+// * {padding:0px; margin:0px;}
+// *, *::before, *::after { box-sizing: border-box;}
+.awards-cards {
+  column-count: 4;
+  column-gap: 1em;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 10px;}
+.award-card__wrapper {
+  border-radius: 10px;
+  background-color:white;
+  display: inline-block;
+  margin: 0 0 1em;
+  width: 100%;
+  padding: 5px;
+
+  .post_footer {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+    .button {
+        background-color: aqua;
+    }
+}
+}
+
