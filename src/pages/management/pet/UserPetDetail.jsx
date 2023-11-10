@@ -1,7 +1,9 @@
 import React from "react";
+import { Flex, Center, Square, Text, Box } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 const UserPetDetail = () => {
-    return <div>UserPetDetail</div>;
+    return <></>;
 };
 
 export default UserPetDetail;

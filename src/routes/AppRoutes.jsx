@@ -1,31 +1,58 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import LayoutUser from "../layout/LayoutUser";
-import Home from "../pages/home/Home";
-import PetStore from "./../pages/store/pet/PetStore";
-import PetDetail from "./../pages/store/pet/PetDetail";
-import GoodStore from "../pages/store/good/GoodStore";
-import GoodDetail from "../pages/store/good/GoodDetail";
-import UserPetList from "./../pages/management/pet/UserPetList";
-import UserGoodlist from "./../pages/management/good/UserGoodList";
-import AddPost from "./../pages/home/AddPost";
+import Login from "./../pages/auth/Login";
+import Unauthorized from "./../pages/403/Unauthorized";
+import AuthRoute from "./authRoutes";
+import { ROLES } from "./roles";
+import { adminRoutes, userRoutes } from "./routesByRole";
+import CheckRoute from "./checkRoutes";
+import NotFound from "./../pages/404/NotFound";
 
 const AppRoutes = () => {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<LayoutUser />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/add" element={<AddPost />} />
-                    <Route path="/pets" element={<PetStore />} />
-                    <Route path="/pets/detail" element={<PetDetail />} />
-                    <Route path="/goods" element={<GoodStore />} />
-                    <Route path="/goods/detail" element={<GoodDetail />} />
-                    <Route path="/profile/mypets" element={<UserPetList />} />
-                    <Route path="/profile/mygoods" element={<UserGoodlist />} />
+        <Routes>
+            <Route element={<CheckRoute />}>
+                <Route path="/login" element={<Login />} />
+            </Route>
+
+            <Route path="/unauthorized" element={<Unauthorized />}></Route>
+            <Route
+                key="home"
+                element={<AuthRoute allowedRoles={[ROLES.MEMBER]} />}
+            >
+                <Route key="layout_public" element={<LayoutUser />}>
+                    {userRoutes.map((route, index) => {
+                        return (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={route.element}
+                            />
+                        );
+                    })}
                 </Route>
-            </Routes>
-        </BrowserRouter>
+            </Route>
+
+            <Route
+                key="home"
+                element={<AuthRoute allowedRoles={[ROLES.ADMIN]} />}
+            >
+                <Route key="layout_public" element={<LayoutUser />}>
+                    {adminRoutes.map((route, index) => {
+                        return (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={route.element}
+                            />
+                        );
+                    })}
+                </Route>
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
+        </Routes>
     );
 };
 

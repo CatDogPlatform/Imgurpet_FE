@@ -1,17 +1,5 @@
 import React from "react";
-import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-    Textarea,
-    Button,
-    ButtonGroup,
-    Box,
-} from "@chakra-ui/react";
+import { Textarea, Button, ButtonGroup, Box } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
 const AddPost = ({ open, onOpen, close }) => {
