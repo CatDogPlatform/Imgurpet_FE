@@ -19,33 +19,32 @@ import Logo from "../../../components/Logo/logo";
 import { colors } from "../../../Styles/Color/colors";
 import "./TopBar.scss";
 import AddPost from "../../../pages/home/AddPost";
+import { Link } from "react-router-dom";
 
 const TopBar = () => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
-
     return (
         <>
-            <AddPost open={isOpen} close={onClose}></AddPost>
             <table className="nav-main-tbl">
                 <tr>
                     <th>
                         <Logo />
                     </th>
                     <th style={{ width: "10%" }}>
-                        <Button
-                            variant="solid"
-                            alignItems="center"
-                            leftIcon={<AddIcon />}
-                            onClick={onOpen}
-                        >
-                            <Text
-                                fontWeight="bold"
-                                color={colors.gray_500}
-                                style={{ fontSize: 13 }}
+                        <Link to="/add">
+                            <Button
+                                variant="solid"
+                                alignItems="center"
+                                leftIcon={<AddIcon />}
                             >
-                                New post
-                            </Text>
-                        </Button>
+                                <Text
+                                    fontWeight="bold"
+                                    color={colors.gray_500}
+                                    style={{ fontSize: 13 }}
+                                >
+                                    New post
+                                </Text>
+                            </Button>
+                        </Link>
                     </th>
                     <th style={{ width: "70%" }}>
                         <SearchBar />
@@ -85,12 +84,15 @@ const TopBar = () => {
                             <MenuList>
                                 <MenuGroup title="Profile">
                                     <MenuItem>My Account</MenuItem>
-                                    <MenuItem>Payments </MenuItem>
                                 </MenuGroup>
                                 <MenuDivider />
-                                <MenuGroup title="Help">
-                                    <MenuItem>Docs</MenuItem>
-                                    <MenuItem>FAQ</MenuItem>
+                                <MenuGroup title="Management">
+                                    <Link to="/profile/mypets">
+                                        <MenuItem>My Pets</MenuItem>
+                                    </Link>
+                                    <Link to="/profile/mygoods">
+                                        <MenuItem>My Goods</MenuItem>
+                                    </Link>
                                 </MenuGroup>
                             </MenuList>
                         </Menu>
