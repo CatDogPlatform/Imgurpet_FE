@@ -14,82 +14,81 @@ import {
   Td,
   Button,
   TableContainer,
-  TableHead,
-  TableRow,
   useToast,
-  Pagination,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  ButtonGroup,
 } from "@chakra-ui/react";
-// import { DetailModal } from "./DetailButton";
-// import Searchbar from '../../../layout/LayoutAdmin/Topbar/Searchbar';
+import axios from "axios";
+import userApi from "../../../utils/userAPI";
+import { toast } from "react-toastify";
 
 const StaffTable = () => {
   const [value, setValue] = useState("pending");
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]); // Dữ liệu từ API
   const [isLoading, setIsLoading] = useState(true);
-
-  const toast = useToast();
+  const [isBanAlertOpen, setIsBanAlertOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const handleDetailClick = (row) => {
     setSelectedCandidate(row);
-    setIsDetailModalOpen(true);
-  };
-
-  const handleCloseDetailModal = () => {
-    setIsDetailModalOpen(false);
   };
 
   const handleChange = (newValue) => {
     setValue(newValue);
   };
 
-  const handleChangePage = (newPage) => {
-    setCurrentPage(newPage);
+  const handleBanAlertOpen = (row) => {
+    setSelectedRow(row);
+    setIsBanAlertOpen(true);
   };
 
-  const handleRejectClick = (row) => {
-    // Gửi yêu cầu PUT lên API để đánh dấu rằng mục đã bị từ chối.
-    fetch(`https://64a7842d096b3f0fcc8165a8.mockapi.io/pdfAPi/${row.postId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ reject: true }), // Đánh dấu mục là rejected
-    })
-      .then((response) => {
-        if (response.ok) {
-          // Cập nhật dữ liệu trong local state để thể hiện trạng thái mới.
-          const updatedData = data.map((item) =>
-            item.postId === row.postId ? { ...item, reject: true } : item
-          );
-          setData(updatedData);
-          toast({
-            title: "Success Notification!",
-            position: "top-right",
-            status: "success",
-          });
+  const handleBanAlertClose = () => {
+    setIsBanAlertOpen(false);
+  };
 
-          // Kiểm tra xem trạng thái cần chuyển qua "Rejected"
-          if (value === "pending") {
-            handleChange("rejected");
-          }
-        } else {
-          console.error("Lỗi khi gửi yêu cầu PUT lên API");
-        }
+  const handleBanClick = () => {
+    // Gửi yêu cầu PUT lên API để đánh dấu rằng người dùng đã bị cấm.
+    // axios
+    //   .put(
+    //     `https://petdom-apis.onrender.com/api/members/${selectedRow._id}/ban`
+    //   )
+    userApi
+      .bannedUser(selectedRow._id)
+      .then((response) => {
+        console.log("log ra", response);
+
+        // Cập nhật trạng thái cấm trong local state để thể hiện trạng thái mới.
+        const updatedData = data.map((item) =>
+          item._id === selectedRow._id ? { ...item, status: "BANNED" } : item
+        );
+        setData(updatedData);
+
+        toast.success("Ban Successful!");
+
+        // Chuyển sang tab "Banned"
+        setValue("banned");
       })
+
       .catch((error) => {
         console.error("Lỗi khi gửi yêu cầu PUT lên API:", error);
+      })
+      .finally(() => {
+        setIsBanAlertOpen(false);
       });
   };
-
   useEffect(() => {
     // Gọi API và cập nhật dữ liệu
-    fetch("https://64a7842d096b3f0fcc8165a8.mockapi.io/pdfAPi")
-      .then((response) => response.json())
-      .then((result) => {
-        setData(result);
+    axios
+      .get("https://petdom-apis.onrender.com/api/user/staffs?search=")
+      .then((response) => {
+        setData(response.data);
+        console.log("data dau ra", response.data);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -97,22 +96,38 @@ const StaffTable = () => {
         setIsLoading(false);
       });
   }, []);
+  useEffect(() => {
+    // Gọi API và cập nhật dữ liệu
+    if (value === "banned") {
+      axios
+        .get("https://petdom-apis.onrender.com/api/user/staffs?search=")
+        .then((response) => {
+          setData(response.data);
+          console.log("data dau ra", response.data);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Lỗi khi gọi API:", error);
+          setIsLoading(false);
+        });
+    }
+  }, [value]);
 
   return (
     <Box width="100%">
       <Tabs value={value} onChange={handleChange} colorScheme="teal">
         <TabList borderBottom="1px" borderColor="gray.200">
           <Tab
-            className={`panel_one ${value === "pending" ? "is-active" : ""}`}
+            className={`panel_one ${value === "staff" ? "is-active" : ""}`}
             _selected={{ borderBottom: "2px solid red" }}
           >
-            Pending
+            Staff
           </Tab>
           <Tab
-            className={`panel_one ${value === "rejected" ? "is-active" : ""}`}
+            className={`panel_one ${value === "banned" ? "is-active" : ""}`}
             _selected={{ borderBottom: "2px solid blue" }}
           >
-            Rejected
+            Banned
           </Tab>
         </TabList>
         <TabPanels>
@@ -124,9 +139,10 @@ const StaffTable = () => {
               <Table>
                 <Thead>
                   <Tr>
-                    <Th>PostID</Th>
-                    <Th>Date</Th>
+                    <Th>ID</Th>
+                    <Th>Email</Th>
                     <Th>User</Th>
+                    <Th>Role</Th>
                     <Th>Status</Th>
                     <Th>Action</Th>
                   </Tr>
@@ -134,48 +150,40 @@ const StaffTable = () => {
                 <Tbody>
                   {isLoading ? (
                     <Tr>
-                      <Td colSpan={5}>Đang tải dữ liệu...</Td>
+                      <Td colSpan={6}>Đang tải dữ liệu...</Td>
                     </Tr>
-                  ) : (
+                  ) : Array.isArray(data) ? (
                     data.map((row) => (
-                      <Tr key={row.postId}>
-                        <Td fontWeight="700">{row.postId}</Td>
+                      <Tr key={row.email}>
+                        <Td fontWeight="700">{row._id}</Td>
                         <Td align="center" fontWeight="700">
-                          {row.date}
+                          {row.email}
                         </Td>
                         <Td align="center" fontWeight="700">
-                          {row.user}
+                          {row.fullname}
+                        </Td>
+                        <Td align="center" fontWeight="700">
+                          {row.role}
                         </Td>
                         <Td align="center" fontWeight="700">
                           {row.status}
                         </Td>
                         <Td align="center">
                           <Button
-                            onClick={() => handleDetailClick(row)}
-                            color="teal.500"
+                            colorScheme="red"
                             fontWeight="700"
                             textTransform="none"
+                            onClick={() => handleBanAlertOpen(row)}
                           >
-                            Detail
-                          </Button>
-                          <Button
-                            color="green.500"
-                            fontWeight="700"
-                            textTransform="none"
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            color="red.500"
-                            fontWeight="700"
-                            textTransform="none"
-                            onClick={() => handleRejectClick(row)}
-                          >
-                            Reject
+                            Ban
                           </Button>
                         </Td>
                       </Tr>
                     ))
+                  ) : (
+                    <Tr>
+                      <Td colSpan={6}>Dữ liệu không hợp lệ</Td>
+                    </Tr>
                   )}
                 </Tbody>
               </Table>
@@ -186,12 +194,12 @@ const StaffTable = () => {
               {/* <Searchbar /> */}
             </Box>
             <TableContainer>
-              <Table variant="striped" colorScheme="teal">
+              <Table>
                 <Thead>
                   <Tr>
                     <Th>PostID</Th>
                     <Th>Date</Th>
-                    <Th>User</Th>
+                    <Th>Role</Th>
                     <Th>Status</Th>
                     <Th>Action</Th>
                   </Tr>
@@ -201,15 +209,15 @@ const StaffTable = () => {
                     <Tr>
                       <Td colSpan={5}>Đang tải dữ liệu...</Td>
                     </Tr>
-                  ) : (
+                  ) : Array.isArray(data) ? (
                     data.map((row) => (
-                      <Tr key={row.postId}>
+                      <Tr key={row._id}>
                         <Td fontWeight="700">{row.postId}</Td>
                         <Td align="center" fontWeight="700">
-                          {row.date}
+                          {row.email}
                         </Td>
                         <Td align="center" fontWeight="700">
-                          {row.user}
+                          {row.role}
                         </Td>
                         <Td align="center" fontWeight="700">
                           {row.status}
@@ -217,30 +225,19 @@ const StaffTable = () => {
                         <Td align="center">
                           <Button
                             onClick={() => handleDetailClick(row)}
-                            color="teal.500"
+                            colorScheme="teal"
                             fontWeight="700"
                             textTransform="none"
                           >
                             Detail
                           </Button>
-                          <Button
-                            color="green.500"
-                            fontWeight="700"
-                            textTransform="none"
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            color="red.500"
-                            fontWeight="700"
-                            textTransform="none"
-                            onClick={() => handleRejectClick(row)}
-                          >
-                            Reject
-                          </Button>
                         </Td>
                       </Tr>
                     ))
+                  ) : (
+                    <Tr>
+                      <Td colSpan={5}>Dữ liệu không hợp lệ</Td>
+                    </Tr>
                   )}
                 </Tbody>
               </Table>
@@ -248,18 +245,35 @@ const StaffTable = () => {
           </TabPanel>
         </TabPanels>
       </Tabs>
-      {/* <DetailModal isOpen={isDetailModalOpen} handleCloseDetailModal={handleCloseDetailModal} row={selectedCandidate} />
-      <Pagination
-        page={currentPage}
-        onChange={handleChangePage}
-        showFirstButton
-        showLastButton
-        style={{
-          marginLeft: '930px',
-          paddingTop: '10px',
-          paddingBottom: '15px',
-        }}
-      /> */}
+
+      {/* AlertDialog for Ban Confirmation */}
+      <AlertDialog
+        isOpen={isBanAlertOpen}
+        onClose={handleBanAlertClose}
+        leastDestructiveRef={undefined}
+        autoFocus={false}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Ban User
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to ban this user?
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <ButtonGroup>
+                <Button onClick={handleBanAlertClose}>No</Button>
+                <Button colorScheme="red" onClick={handleBanClick} ml={3}>
+                  Yes
+                </Button>
+              </ButtonGroup>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };

@@ -40,7 +40,6 @@ const Login = () => {
           email: values.email,
           password: values.password,
         });
-        console.log("check", response);
         localStorage.setItem("access_token", response.access_token);
         localStorage.setItem("userInfor", JSON.stringify(response.data));
         setAuth({
@@ -50,11 +49,11 @@ const Login = () => {
         if (response.data.role === "MEMBER") {
           navigate("/");
         }
-        if (response.data.role === "ADMIN") {
-          navigate("/admin");
-        }
         if (response.data.role === "STAFF") {
           navigate("/");
+        }
+        if (response.data.role === "ADMIN") {
+          navigate("/stafflist");
         }
 
         toast.success(response.message);
@@ -76,6 +75,7 @@ const Login = () => {
       h="100vh"
       display="flex"
       alignItems="center"
+      justifyContent="center"
     >
       <Box
         p="40px"

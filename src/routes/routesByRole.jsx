@@ -7,45 +7,50 @@ import UserPetList from "./../pages/management/pet/UserPetList";
 import UserGoodlist from "./../pages/management/good/UserGoodList";
 import AddPost from "./../pages/home/AddPost";
 import StaffList from "../pages/admin/staffManagement/StaffList";
+import PostList from "../pages/postList/postList";
 
 export const userRoutes = [
-    {
-        path: "/",
-        element: <Home />,
-    },
-    {
-        path: "/add",
-        element: <AddPost />,
-    },
-    {
-        path: "/pets",
-        element: <PetStore />,
-    },
-    {
-        path: "/pets/detail",
-        element: <PetDetail />,
-    },
-    {
-        path: "/goods",
-        element: <GoodStore />,
-    },
-    {
-        path: "/goods/detail",
-        element: <GoodDetail />,
-    },
-    {
-        path: "/profile/mypets",
-        element: <UserPetList />,
-    },
-    {
-        path: "/profile/mygoods",
-        element: <UserGoodlist />,
-    },
+  {
+    path: "/",
+    element: <Home />,
+  },
+  {
+    path: "/add",
+    element: <AddPost />,
+  },
+  {
+    path: "/pets",
+    element: <PetStore />,
+  },
+  {
+    path: "/pets/detail",
+    element: <PetDetail />,
+  },
+  {
+    path: "/goods",
+    element: <GoodStore />,
+  },
+  {
+    path: "/goods/detail",
+    element: <GoodDetail />,
+  },
+  {
+    path: "/profile/mypets",
+    element: <UserPetList />,
+  },
+  {
+    path: "/profile/mygoods",
+    element: <UserGoodlist />,
+  },
 ];
 
 export const adminRoutes = [
-    {
-        path: "/admin",
-        element: <StaffList />,
-    },
+  {
+    path: "/stafflist",
+    element: <StaffList />,
+  },
+  {
+    path: "/postlist",
+    element: <PostList />,
+  },
 ];

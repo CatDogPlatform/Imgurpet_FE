@@ -10,50 +10,36 @@ import CheckRoute from "./checkRoutes";
 import NotFound from "./../pages/404/NotFound";
 
 const AppRoutes = () => {
-    return (
-        <Routes>
-            <Route element={<CheckRoute />}>
-                <Route path="/login" element={<Login />} />
-            </Route>
+  return (
+    <Routes>
+      <Route element={<CheckRoute />}>
+        <Route path="/login" element={<Login />} />
+      </Route>
 
-            <Route path="/unauthorized" element={<Unauthorized />}></Route>
-            <Route
-                key="home"
-                element={<AuthRoute allowedRoles={[ROLES.MEMBER]} />}
-            >
-                <Route key="layout_public" element={<LayoutUser />}>
-                    {userRoutes.map((route, index) => {
-                        return (
-                            <Route
-                                key={index}
-                                path={route.path}
-                                element={route.element}
-                            />
-                        );
-                    })}
-                </Route>
-            </Route>
+      <Route path="/unauthorized" element={<Unauthorized />}></Route>
+      <Route key="home" element={<AuthRoute allowedRoles={[ROLES.MEMBER]} />}>
+        <Route key="layout_public" element={<LayoutUser />}>
+          {userRoutes.map((route, index) => {
+            return (
+              <Route key={index} path={route.path} element={route.element} />
+            );
+          })}
+        </Route>
+      </Route>
 
-            <Route
-                key="home"
-                element={<AuthRoute allowedRoles={[ROLES.ADMIN]} />}
-            >
-                <Route key="layout_public" element={<LayoutUser />}>
-                    {adminRoutes.map((route, index) => {
-                        return (
-                            <Route
-                                key={index}
-                                path={route.path}
-                                element={route.element}
-                            />
-                        );
-                    })}
-                </Route>
-            </Route>
+      <Route key="home" element={<AuthRoute allowedRoles={[ROLES.ADMIN]} />}>
+        <Route key="layout_public" element={<LayoutUser />}>
+          {adminRoutes.map((route, index) => {
+            return (
+              <Route key={index} path={route.path} element={route.element} />
+            );
+          })}
+        </Route>
+      </Route>
 
-            <Route path="*" element={<NotFound />} />
-        </Routes>
-    );
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
 };
 
 export default AppRoutes;
