@@ -10,7 +10,7 @@ const AuthRoute = ({ allowedRoles }) => {
     ) : auth?.user ? (
         <Navigate to="/unauthorized" state={{ from: location }} replace />
     ) : (
-        <Navigate to="/login-page" state={{ from: location }} replace />
+        <Navigate to="/login" state={{ from: location }} replace />
     );
 };
 

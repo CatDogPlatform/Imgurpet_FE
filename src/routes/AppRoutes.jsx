@@ -8,10 +8,15 @@ import { ROLES } from "./roles";
 import { adminRoutes, userRoutes } from "./routesByRole";
 import CheckRoute from "./checkRoutes";
 import NotFound from "./../pages/404/NotFound";
+import Home from "./../pages/home/Home";
 
 const AppRoutes = () => {
     return (
         <Routes>
+            <Route key="all_routes" element={<LayoutUser />}>
+                <Route path="/" element={<Home />} />
+            </Route>
+
             <Route element={<CheckRoute />}>
                 <Route path="/login" element={<Login />} />
             </Route>
@@ -21,7 +26,7 @@ const AppRoutes = () => {
                 key="home"
                 element={<AuthRoute allowedRoles={[ROLES.MEMBER]} />}
             >
-                <Route key="layout_public" element={<LayoutUser />}>
+                <Route key="member_routes" element={<LayoutUser />}>
                     {userRoutes.map((route, index) => {
                         return (
                             <Route

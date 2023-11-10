@@ -21,6 +21,9 @@ import axios from "axios";
 
 const Home = () => {
     const [posts, setPosts] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
+    const [page, setPage] = React.useState(1);
 
     const fetchPosts = async () => {
         const res = await axios.get(

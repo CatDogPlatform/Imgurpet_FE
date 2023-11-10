@@ -63,7 +63,7 @@ axiosClient.interceptors.response.use(
             // }
             localStorage.clear();
             toast.warning( "access token expires !" );
-            window.location.href = "/login-page";
+            window.location.href = "/login";
         }
 
         return Promise.reject( error );
