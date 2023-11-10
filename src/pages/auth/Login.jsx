@@ -12,8 +12,9 @@ import {
     FormControl,
     FormLabel,
     FormErrorMessage,
-    Checkbox,
+    Heading,
 } from "@chakra-ui/react";
+import Logo from "../../components/Logo/logo";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -71,17 +72,20 @@ const Login = () => {
             h="100vh"
             display="flex"
             alignItems="center"
+            justifyContent="center"
         >
+            <Box>
+                <Logo />
+            </Box>
+
             <Box
-                p="40px"
+                p="30px"
                 display="flex"
                 flexDirection="column"
                 alignItems="center"
-                border="2px solid grey"
                 borderRadius="10px"
-                boxShadow="5px 10px 8px #888888"
             >
-                <h3>Sign in</h3>
+                <Heading>Sign in</Heading>
                 <form
                     noValidate
                     style={{ marginTop: 1 }}
