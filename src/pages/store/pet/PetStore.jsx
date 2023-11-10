@@ -1,7 +1,7 @@
 import React from "react";
 import {
     Card,
-    CardHeader,
+    Box,
     Divider,
     Image,
     CardBody,
@@ -13,115 +13,74 @@ import {
     Button,
     Grid,
     GridItem,
+    useDisclosure,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import PetDetail from "./PetDetail";
 
 const PetStore = () => {
+    const [pets, setPets] = React.useState([]);
+
+    const fetchPets = async () => {
+        const res = await axios.get(
+            "https://petdom-apis.onrender.com/api/pets?search="
+        );
+        setPets(res.data);
+    };
+
+    React.useEffect(() => {
+        fetchPets();
+    }, []);
     return (
         <>
             <Grid templateColumns="repeat(4, 2fr)" gap={6}>
-                <GridItem w="100%" h="100%">
-                    {" "}
-                    <Card maxW="sm">
-                        <CardBody>
-                            <Image
-                                src="https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                alt="Green double couch with wooden legs"
-                                borderRadius="lg"
-                            />
-                            <Stack mt="6" spacing="3">
-                                <Heading size="md">Living room Sofa</Heading>
-                                <Text>
-                                    This sofa is perfect for modern tropical
-                                    spaces, baroque inspired spaces, earthy
-                                    toned spaces and for people who love a chic
-                                    design with a sprinkle of vintage design.
-                                </Text>
-                                <Text color="blue.600" fontSize="2xl">
-                                    $450
-                                </Text>
-                            </Stack>
-                        </CardBody>
-                        <Divider sx={{ color: "#e0e4e9" }} />
-                        <CardFooter sx={{ justifyContent: "flex-end" }}>
-                            <ButtonGroup spacing="2">
-                                <Link to="/pets/detail">
-                                    <Button variant="solid" colorScheme="blue">
-                                        View
-                                    </Button>
-                                </Link>
-                            </ButtonGroup>
-                        </CardFooter>
-                    </Card>
-                </GridItem>
-                <GridItem w="100%" h="100%">
-                    {" "}
-                    <Card maxW="sm">
-                        <CardBody>
-                            <Image
-                                src="https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                alt="Green double couch with wooden legs"
-                                borderRadius="lg"
-                            />
-                            <Stack mt="6" spacing="3">
-                                <Heading size="md">Living room Sofa</Heading>
-                                <Text>
-                                    This sofa is perfect for modern tropical
-                                    spaces, baroque inspired spaces, earthy
-                                    toned spaces and for people who love a chic
-                                    design with a sprinkle of vintage design.
-                                </Text>
-                                <Text color="blue.600" fontSize="2xl">
-                                    $450
-                                </Text>
-                            </Stack>
-                        </CardBody>
-                        <Divider sx={{ color: "#e0e4e9" }} />
-                        <CardFooter sx={{ justifyContent: "flex-end" }}>
-                            <ButtonGroup spacing="2">
-                                <Link to="/pets/detail">
-                                    <Button variant="solid" colorScheme="blue">
-                                        View
-                                    </Button>
-                                </Link>
-                            </ButtonGroup>
-                        </CardFooter>
-                    </Card>
-                </GridItem>
-                <GridItem w="100%" h="100%">
-                    {" "}
-                    <Card maxW="sm">
-                        <CardBody>
-                            <Image
-                                src="https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                alt="Green double couch with wooden legs"
-                                borderRadius="lg"
-                            />
-                            <Stack mt="6" spacing="3">
-                                <Heading size="md">Living room Sofa</Heading>
-                                <Text>
-                                    This sofa is perfect for modern tropical
-                                    spaces, baroque inspired spaces, earthy
-                                    toned spaces and for people who love a chic
-                                    design with a sprinkle of vintage design.
-                                </Text>
-                                <Text color="blue.600" fontSize="2xl">
-                                    $450
-                                </Text>
-                            </Stack>
-                        </CardBody>
-                        <Divider sx={{ color: "#e0e4e9" }} />
-                        <CardFooter sx={{ justifyContent: "flex-end" }}>
-                            <ButtonGroup spacing="2">
-                                <Link to="/pets/detail">
-                                    <Button variant="solid" colorScheme="blue">
-                                        View
-                                    </Button>
-                                </Link>
-                            </ButtonGroup>
-                        </CardFooter>
-                    </Card>
-                </GridItem>
+                {pets &&
+                    pets.map((item) => (
+                        <GridItem w="100%" h="100%">
+                            <Card maxW="sm">
+                                <CardBody>
+                                    <Box
+                                        height="250px"
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        <Image
+                                            src={item?.images}
+                                            alt="Green double couch with wooden legs"
+                                            borderRadius="lg"
+                                        />
+                                    </Box>
+                                    <Stack mt="6" spacing="3">
+                                        <Heading size="md">
+                                            {item?.name}
+                                        </Heading>
+                                        <Text>{item?.description}</Text>
+                                        <Text color="blue.600" fontSize="2xl">
+                                            ${item?.price}
+                                        </Text>
+                                    </Stack>
+                                </CardBody>
+                                <Divider sx={{ color: "#e0e4e9" }} />
+                                <CardFooter sx={{ justifyContent: "flex-end" }}>
+                                    <ButtonGroup spacing="2">
+                                        <Link to={`/pets/${item._id}`}>
+                                            <Button
+                                                variant="solid"
+                                                colorScheme="blue"
+                                            >
+                                                View
+                                            </Button>
+                                        </Link>
+                                    </ButtonGroup>
+                                </CardFooter>
+                            </Card>
+                        </GridItem>
+                    ))}
             </Grid>
         </>
     );

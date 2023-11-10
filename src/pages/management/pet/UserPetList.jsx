@@ -1,7 +1,7 @@
 import React from "react";
 import {
     Card,
-    CardHeader,
+    Button,
     Divider,
     Image,
     CardBody,
@@ -10,7 +10,6 @@ import {
     Text,
     Heading,
     ButtonGroup,
-    Button,
     Grid,
     GridItem,
     Box,
@@ -20,10 +19,30 @@ import { Link } from "react-router-dom";
 const UserPetList = () => {
     return (
         <>
-            <Box sx={{ justifyContent: "flex-start", marginBottom: "30px" }}>
-                <Heading as="h3" size="lg">
-                    My Pets
-                </Heading>
+            <Box sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
+                <Box
+                    sx={{
+                        width: "50%",
+                        justifyContent: "flex-start",
+                        marginBottom: "30px",
+                    }}
+                >
+                    <Heading as="h3" size="lg">
+                        My Pets
+                    </Heading>
+                </Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        width: "50%",
+                        justifyContent: "flex-end",
+                        marginBottom: "30px",
+                    }}
+                >
+                    <Link to="/profile/mypets/add">
+                        <Button>Add</Button>
+                    </Link>
+                </Box>
             </Box>
 
             <Grid templateColumns="repeat(4, 2fr)" gap={6}>

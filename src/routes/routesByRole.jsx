@@ -7,6 +7,9 @@ import UserPetList from "./../pages/management/pet/UserPetList";
 import UserGoodlist from "./../pages/management/good/UserGoodList";
 import AddPost from "./../pages/home/AddPost";
 import StaffList from "../pages/admin/staffManagement/StaffList";
+import Profile from "./../pages/profile/Profile";
+import AddUserPet from "./../pages/management/pet/AddUserPet";
+import AddUserGood from "./../pages/management/good/AddUserGood";
 
 export const userRoutes = [
     {
@@ -22,7 +25,7 @@ export const userRoutes = [
         element: <PetStore />,
     },
     {
-        path: "/pets/detail",
+        path: "/pets/:id",
         element: <PetDetail />,
     },
     {
@@ -30,16 +33,28 @@ export const userRoutes = [
         element: <GoodStore />,
     },
     {
-        path: "/goods/detail",
+        path: "/goods/:id",
         element: <GoodDetail />,
+    },
+    {
+        path: "/profile",
+        element: <Profile />,
     },
     {
         path: "/profile/mypets",
         element: <UserPetList />,
     },
     {
+        path: "/profile/mypets/add",
+        element: <AddUserPet />,
+    },
+    {
         path: "/profile/mygoods",
         element: <UserGoodlist />,
+    },
+    {
+        path: "/profile/mygoods/add",
+        element: <AddUserGood />,
     },
 ];
 
