@@ -25,8 +25,9 @@ export const userRoutes = [
     path: "/pets",
     element: <PetStore />,
   },
+
   {
-    path: "/pets/:id",
+    path: "/update-pet/:petId", // Thay đổi ở đây
     element: <PetDetail />,
   },
   {
