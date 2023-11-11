@@ -36,10 +36,6 @@ const StaffTable = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [isBanPending, setIsBanPending] = useState(false);
 
-  const handleDetailClick = (row) => {
-    setSelectedRow(row);
-  };
-
   const handleChange = (newValue) => {
     setValue(newValue);
   };
@@ -88,42 +84,82 @@ const StaffTable = () => {
       });
   };
 
-  useEffect(() => {
-    axios
-      .get("https://petdom-apis.onrender.com/api/user/staffs?search=")
+  const handleUnbanClick = () => {
+    userApi
+      .unBannedUser(selectedRow._id)
       .then((response) => {
-        setStaffData(response.data);
-        setIsLoading(false);
+        const updatedBannedData = bannedData.filter(
+          (item) => item._id !== selectedRow._id
+        );
+        setBannedData(updatedBannedData);
+
+        const updatedStaffData = [
+          ...staffData,
+          { ...selectedRow, status: "ACTIVE" },
+        ];
+        setStaffData(updatedStaffData);
+
+        // Update Local Storage
+        localStorage.setItem("bannedData", JSON.stringify(updatedBannedData));
+        localStorage.setItem("staffData", JSON.stringify(updatedStaffData));
+
+        toast.success("Unban Successful!");
+
+        setValue("staff");
       })
       .catch((error) => {
+        console.error("Lỗi khi gửi yêu cầu PUT lên API:", error);
+      })
+      .finally(() => {
+        setIsBanPending(false);
+        setIsBanAlertOpen(false);
+      });
+  };
+
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const response = await axios.get(
+          "https://petdom-apis.onrender.com/api/user/staffs?search="
+        );
+        setStaffData(response.data);
+        setIsLoading(false);
+      } catch (error) {
         console.error("Lỗi khi gọi API:", error);
         setIsLoading(false);
-      });
+      }
+    };
+
+    fetchStaffData();
   }, []);
 
   useEffect(() => {
-    if (value === "banned") {
-      // Try to get bannedData from Local Storage
-      const storedBannedData = localStorage.getItem("bannedData");
-      if (storedBannedData) {
-        setBannedData(JSON.parse(storedBannedData));
-        setIsLoading(false);
-      } else {
-        // If not available, fetch data from API
-        axios
-          .get("https://petdom-apis.onrender.com/api/user/banned?search=")
-          .then((response) => {
+    const fetchBannedData = async () => {
+      if (value === "banned") {
+        // Try to get bannedData from Local Storage
+        const storedBannedData = localStorage.getItem("bannedData");
+        if (storedBannedData) {
+          setBannedData(JSON.parse(storedBannedData));
+          setIsLoading(false);
+        } else {
+          // If not available, fetch data from API
+          try {
+            const response = await axios.get(
+              "https://petdom-apis.onrender.com/api/staffs/banned?search="
+            );
             setBannedData(response.data);
             setIsLoading(false);
             // Update Local Storage
             localStorage.setItem("bannedData", JSON.stringify(response.data));
-          })
-          .catch((error) => {
+          } catch (error) {
             console.error("Lỗi khi gọi API:", error);
             setIsLoading(false);
-          });
+          }
+        }
       }
-    }
+    };
+
+    fetchBannedData();
   }, [value]);
 
   return (
@@ -210,8 +246,9 @@ const StaffTable = () => {
               <Table>
                 <Thead>
                   <Tr>
-                    <Th>PostID</Th>
-                    <Th>Date</Th>
+                    <Th>ID</Th>
+                    <Th>Email</Th>
+                    <Th>User</Th>
                     <Th>Role</Th>
                     <Th>Status</Th>
                     <Th>Action</Th>
@@ -224,10 +261,13 @@ const StaffTable = () => {
                     </Tr>
                   ) : Array.isArray(bannedData) && bannedData.length > 0 ? (
                     bannedData.map((row) => (
-                      <Tr key={row._id}>
-                        <Td fontWeight="700">{row.postId}</Td>
+                      <Tr key={row.email}>
+                        <Td fontWeight="700">{row._id}</Td>
                         <Td align="center" fontWeight="700">
                           {row.email}
+                        </Td>
+                        <Td align="center" fontWeight="700">
+                          {row.fullname}
                         </Td>
                         <Td align="center" fontWeight="700">
                           {row.role}
@@ -237,12 +277,12 @@ const StaffTable = () => {
                         </Td>
                         <Td align="center">
                           <Button
-                            onClick={() => handleDetailClick(row)}
                             colorScheme="teal"
                             fontWeight="700"
                             textTransform="none"
+                            onClick={() => handleUnbanClick(row)}
                           >
-                            Detail
+                            Unban
                           </Button>
                         </Td>
                       </Tr>
