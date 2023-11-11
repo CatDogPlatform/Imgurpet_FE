@@ -11,9 +11,7 @@ const PetDetail = () => {
 
     const fetchPet = async () => {
         console.log(petId);
-        const res = await axios.get(
-            `https://petdom-apis.onrender.com/api/pets/${petId.id}`
-        );
+        const res = await axios.get(`https://petdom-apis.onrender.com/api/pets/${petId.id}`);
         setPet(res.data);
     };
 
@@ -30,12 +28,7 @@ const PetDetail = () => {
                 }}
             >
                 <Box sx={{ width: "50%" }}>
-                    <Image
-                        sx={{ borderRadius: "20px" }}
-                        boxSize="550px"
-                        objectFit="cover"
-                        src={pet?.images}
-                    />
+                    <Image sx={{ borderRadius: "20px" }} boxSize="550px" objectFit="cover" src={pet?.images} />
                 </Box>
                 <Box
                     sx={{
@@ -49,61 +42,31 @@ const PetDetail = () => {
                     <Box sx={{ display: "flex", flexDirection: "row" }}>
                         <Box
                             sx={{
-                                width: "20%",
+                                width: "100%",
                                 display: "flex",
                                 flexDirection: "row",
                                 justifyContent: "flex-start",
                                 alignItems: "center",
                             }}
                         >
-                            <Text fontSize="xl">Description: </Text>
-                        </Box>
-                        <Box
-                            sx={{
-                                width: "80%",
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "flex-end",
-                            }}
-                        >
-                            <Text>{pet?.description}</Text>
-                        </Box>
-                    </Box>
-
-                    <Box sx={{ display: "flex", flexDirection: "row" }}>
-                        <Box
-                            sx={{
-                                width: "20%",
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "flex-start",
-                                alignItems: "center",
-                            }}
-                        >
-                            <Text fontSize="xl">Weight: </Text>
-                        </Box>
-                        <Box
-                            sx={{
-                                width: "80%",
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "flex-end",
-                            }}
-                        >
-                            <Text>{pet?.weight}</Text>
+                            <Text fontSize="xl">
+                                Status : <span style={{ color: "green" }}>{pet?.status}</span>
+                            </Text>
                         </Box>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row" }}>
                         <Box
                             sx={{
-                                width: "20%",
+                                width: "100%",
                                 display: "flex",
                                 flexDirection: "row",
                                 justifyContent: "flex-start",
                                 alignItems: "center",
                             }}
                         >
-                            <Text fontSize="xl">Gender: </Text>
+                            <Text fontSize="xl">
+                                id : <span style={{ color: "red" }}>{pet?._id}</span>
+                            </Text>
                         </Box>
                         <Box
                             sx={{
