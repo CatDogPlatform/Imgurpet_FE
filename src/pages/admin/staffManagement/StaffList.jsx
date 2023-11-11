@@ -28,15 +28,16 @@ import userApi from "../../../utils/userAPI";
 import { toast } from "react-toastify";
 
 const StaffTable = () => {
-  const [value, setValue] = useState("pending");
-  const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [data, setData] = useState([]); // Dữ liệu từ API
+  const [value, setValue] = useState("staff");
+  const [staffData, setStaffData] = useState([]);
+  const [bannedData, setBannedData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isBanAlertOpen, setIsBanAlertOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [isBanPending, setIsBanPending] = useState(false);
 
   const handleDetailClick = (row) => {
-    setSelectedCandidate(row);
+    setSelectedRow(row);
   };
 
   const handleChange = (newValue) => {
@@ -53,42 +54,45 @@ const StaffTable = () => {
   };
 
   const handleBanClick = () => {
-    // Gửi yêu cầu PUT lên API để đánh dấu rằng người dùng đã bị cấm.
-    // axios
-    //   .put(
-    //     `https://petdom-apis.onrender.com/api/members/${selectedRow._id}/ban`
-    //   )
+    setIsBanPending(true);
+
     userApi
       .bannedUser(selectedRow._id)
       .then((response) => {
-        console.log("log ra", response);
-
-        // Cập nhật trạng thái cấm trong local state để thể hiện trạng thái mới.
-        const updatedData = data.map((item) =>
-          item._id === selectedRow._id ? { ...item, status: "BANNED" } : item
+        // Remove the banned user from staffData
+        const updatedStaffData = staffData.filter(
+          (item) => item._id !== selectedRow._id
         );
-        setData(updatedData);
+        setStaffData(updatedStaffData);
+
+        // Add the banned user to bannedData
+        const updatedBannedData = [
+          ...bannedData,
+          { ...selectedRow, status: "BANNED" },
+        ];
+        setBannedData(updatedBannedData);
+
+        // Update Local Storage
+        localStorage.setItem("bannedData", JSON.stringify(updatedBannedData));
 
         toast.success("Ban Successful!");
 
-        // Chuyển sang tab "Banned"
         setValue("banned");
       })
-
       .catch((error) => {
         console.error("Lỗi khi gửi yêu cầu PUT lên API:", error);
       })
       .finally(() => {
+        setIsBanPending(false);
         setIsBanAlertOpen(false);
       });
   };
+
   useEffect(() => {
-    // Gọi API và cập nhật dữ liệu
     axios
       .get("https://petdom-apis.onrender.com/api/user/staffs?search=")
       .then((response) => {
-        setData(response.data);
-        console.log("data dau ra", response.data);
+        setStaffData(response.data);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -96,20 +100,29 @@ const StaffTable = () => {
         setIsLoading(false);
       });
   }, []);
+
   useEffect(() => {
-    // Gọi API và cập nhật dữ liệu
     if (value === "banned") {
-      axios
-        .get("https://petdom-apis.onrender.com/api/user/staffs?search=")
-        .then((response) => {
-          setData(response.data);
-          console.log("data dau ra", response.data);
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error("Lỗi khi gọi API:", error);
-          setIsLoading(false);
-        });
+      // Try to get bannedData from Local Storage
+      const storedBannedData = localStorage.getItem("bannedData");
+      if (storedBannedData) {
+        setBannedData(JSON.parse(storedBannedData));
+        setIsLoading(false);
+      } else {
+        // If not available, fetch data from API
+        axios
+          .get("https://petdom-apis.onrender.com/api/user/banned?search=")
+          .then((response) => {
+            setBannedData(response.data);
+            setIsLoading(false);
+            // Update Local Storage
+            localStorage.setItem("bannedData", JSON.stringify(response.data));
+          })
+          .catch((error) => {
+            console.error("Lỗi khi gọi API:", error);
+            setIsLoading(false);
+          });
+      }
     }
   }, [value]);
 
@@ -152,8 +165,8 @@ const StaffTable = () => {
                     <Tr>
                       <Td colSpan={6}>Đang tải dữ liệu...</Td>
                     </Tr>
-                  ) : Array.isArray(data) ? (
-                    data.map((row) => (
+                  ) : Array.isArray(staffData) && staffData.length > 0 ? (
+                    staffData.map((row) => (
                       <Tr key={row.email}>
                         <Td fontWeight="700">{row._id}</Td>
                         <Td align="center" fontWeight="700">
@@ -209,8 +222,8 @@ const StaffTable = () => {
                     <Tr>
                       <Td colSpan={5}>Đang tải dữ liệu...</Td>
                     </Tr>
-                  ) : Array.isArray(data) ? (
-                    data.map((row) => (
+                  ) : Array.isArray(bannedData) && bannedData.length > 0 ? (
+                    bannedData.map((row) => (
                       <Tr key={row._id}>
                         <Td fontWeight="700">{row.postId}</Td>
                         <Td align="center" fontWeight="700">
@@ -260,15 +273,19 @@ const StaffTable = () => {
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Are you sure you want to ban this user?
+              {isBanPending
+                ? "Đang thực hiện ban..."
+                : "Are you sure you want to ban this user?"}
             </AlertDialogBody>
 
             <AlertDialogFooter>
               <ButtonGroup>
                 <Button onClick={handleBanAlertClose}>No</Button>
-                <Button colorScheme="red" onClick={handleBanClick} ml={3}>
-                  Yes
-                </Button>
+                {!isBanPending && (
+                  <Button colorScheme="red" onClick={handleBanClick} ml={3}>
+                    Yes
+                  </Button>
+                )}
               </ButtonGroup>
             </AlertDialogFooter>
           </AlertDialogContent>
