@@ -12,8 +12,9 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Checkbox,
+  Heading,
 } from "@chakra-ui/react";
+import Logo from "../../components/Logo/logo";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -46,16 +47,7 @@ const Login = () => {
           user: response.data,
           accessToken: response.access_token,
         });
-        if (response.data.role === "MEMBER") {
-          navigate("/");
-        }
-        if (response.data.role === "STAFF") {
-          navigate("/");
-        }
-        if (response.data.role === "ADMIN") {
-          navigate("/stafflist");
-        }
-
+        navigate("/");
         toast.success(response.message);
       } catch (error) {
         if (error.response) {
@@ -77,16 +69,18 @@ const Login = () => {
       alignItems="center"
       justifyContent="center"
     >
+      <Box>
+        <Logo />
+      </Box>
+
       <Box
-        p="40px"
+        p="30px"
         display="flex"
         flexDirection="column"
         alignItems="center"
-        border="2px solid grey"
         borderRadius="10px"
-        boxShadow="5px 10px 8px #888888"
       >
-        <h3>Sign in</h3>
+        <Heading>Sign in</Heading>
         <form
           noValidate
           style={{ marginTop: 1 }}

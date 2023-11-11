@@ -1,7 +1,7 @@
 import React from "react";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Textarea, Button, ButtonGroup, Box } from "@chakra-ui/react";
+import { Textarea, Button, ButtonGroup, Box, Input } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
@@ -15,7 +15,7 @@ const dropzoneStyles = {
     cursor: "pointer",
 };
 
-const AddPost = ({ open, onOpen, close }) => {
+const Profile = () => {
     const navigate = useNavigate();
     const jsonString = localStorage.getItem("userInfor");
     const user = JSON.parse(jsonString);
@@ -90,7 +90,6 @@ const AddPost = ({ open, onOpen, close }) => {
             }
         }
     };
-
     return (
         <>
             <Box
@@ -111,14 +110,17 @@ const AddPost = ({ open, onOpen, close }) => {
                         width: "100%",
                     }}
                 >
-                    <Textarea
-                        sx={{
-                            height: "150px",
-                        }}
+                    <Input
                         value={content}
                         onChange={handleInputChange}
-                        placeholder="What's on your mind ?"
-                        size="sm"
+                        placeholder="Email"
+                        size="lg"
+                    />
+                    <Input
+                        value={content}
+                        onChange={handleInputChange}
+                        placeholder="Fullname"
+                        size="lg"
                     />
                 </Box>
                 <Box sx={{ width: "100%" }}>
@@ -174,4 +176,4 @@ const AddPost = ({ open, onOpen, close }) => {
     );
 };
 
-export default AddPost;
+export default Profile;
