@@ -152,7 +152,7 @@ const UserPetList = () => {
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Xác nhận xóa</ModalHeader>
+                    <ModalHeader>Confirm</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Text>Bạn có chắc chắn muốn xóa thú cưng này?</Text>
